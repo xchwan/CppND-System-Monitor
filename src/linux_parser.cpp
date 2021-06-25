@@ -70,7 +70,8 @@ vector<int> LinuxParser::Pids() {
 // Read and return the system memory utilization
 float LinuxParser::MemoryUtilization() { return 0.0; }
     string line, key;
-    float total = 1, free = 1;
+    float total = 1;
+    float free_ = 1;
     std::ifstream stream(kProcDirectory + kMeminfoFilename);
     if (stream.is_open()){
       while (std::getline(stream, line)){
@@ -79,7 +80,7 @@ float LinuxParser::MemoryUtilization() { return 0.0; }
         if (key == "MemTotal"){
           linestream >> total;
         } else if (key == "MemAvailable:"){
-          linestream >> free;
+          linestream >> free_;
           break;
         }
       }
