@@ -3,8 +3,6 @@
 
 #include <string>
 
-namespace Format {
-std::string ElapsedTime(long times);  
-};                                    // namespace Format
+namespace Format { std::string ElapsedTime(long times); };
 
 #endif
