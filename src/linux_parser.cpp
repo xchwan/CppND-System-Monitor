@@ -87,7 +87,6 @@ float LinuxParser::MemoryUtilization() {
         }
         else if (key == "MemFree:") {
           mfree = value;
-          break;
         }
       }
     }
@@ -207,11 +206,10 @@ int LinuxParser::RunningProcesses() {
 
 // Read and return the command associated with a process
 string LinuxParser::Command(int pid) {
-  string command = "";
+  string command;
   std::ifstream stream(kProcDirectory + to_string(pid) + kCmdlineFilename);
   if (stream.is_open()) {
     std::getline(stream, command);
-    return command;
   }
   return command;
 }
