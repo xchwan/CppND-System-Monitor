@@ -73,18 +73,21 @@ float LinuxParser::MemoryUtilization() {
   string line;
   string key;
   string value;
-  string mtotal;
-  string mfree;
+  string mtotal = 0;
+  string mfree = 0;
   std::ifstream stream(kProcDirectory + kMeminfoFilename);
   if (stream.is_open()) {
     while (std::getline(stream, line)) {
+      std::remove(line.begin(), line.end(), ' ');
+      std::replace(line.begin(), line.end(), ':', ' ');
       std::istringstream linestream(line);
       while (linestream >> key >> value) {
         if (key == "MemTotal:") {
           mtotal = value;
         }
-        if (key == "MemFree:") {
+        else if (key == "MemFree:") {
           mfree = value;
+          break;
         }
       }
     }
@@ -204,10 +207,11 @@ int LinuxParser::RunningProcesses() {
 
 // Read and return the command associated with a process
 string LinuxParser::Command(int pid) {
-  string command;
+  string command = "";
   std::ifstream stream(kProcDirectory + to_string(pid) + kCmdlineFilename);
-  if (stream.is_open()) {
-    std::getline(stream, command);
+  if (filestream.is_open()) {
+    std::getline(filestream, command);
+    return command;
   }
   return command;
 }
@@ -220,6 +224,7 @@ string LinuxParser::Ram(int pid) {
   std::ifstream stream(kProcDirectory + to_string(pid) + kStatusFilename);
   if (stream.is_open()) {
     while (std::getline(stream, line)) {
+      std::replace(line.begin(), line.end(), ':', ' ');
       std::istringstream linestream(line);
       while (linestream >> key) {
         if (key == "VmSize:") {
@@ -240,6 +245,7 @@ string LinuxParser::Uid(int pid) {
   std::ifstream stream(kProcDirectory + to_string(pid) + kStatusFilename);
   if (stream.is_open()) {
     while (std::getline(stream, line)) {
+      std::replace(line.begin(), line.end(), ':', ' ');
       std::istringstream linestream(line);
       while (linestream >> key >> value) {
         if (key == "Uid:") {
@@ -254,15 +260,17 @@ string LinuxParser::Uid(int pid) {
 // Read and return the user associated with a process
 string LinuxParser::User(int pid) {
   string line;
-  string name, x, uid;
+  string value = ""; 
+  string other; 
+  string uid;
   std::ifstream stream(kPasswordPath);
   if (stream.is_open()) {
     while (std::getline(stream, line)) {
       std::replace(line.begin(), line.end(), ':', ' ');
       std::istringstream linestream(line);
-      while (linestream >> name >> x >> uid) {
+      while (linestream >> value >> other >> uid) {
         if (uid == LinuxParser::Uid(pid)) {
-          return name;
+          return value;
         }
       }
     }
