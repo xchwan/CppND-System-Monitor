@@ -85,7 +85,7 @@ float LinuxParser::MemoryUtilization() {
       }
     }
   }
-  return (stof(total)-stof(free)) / stof(total);
+  return (total - free) / total;
 }
 
 // Read and return the system uptime
