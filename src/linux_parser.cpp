@@ -103,15 +103,7 @@ long LinuxParser::UpTime() {
 
 // Read and return the number of jiffies for the system
 long LinuxParser::Jiffies() {
-  vector<string> values = LinuxParser::CpuUtilization();
-  vector<long> valueslong(10, 0);
-  long total = 0;
-  vector<CPUStates> all = {kUser_, kNice_, kSystem_, kIdle_, kIOwait_, kIRQ_, kSoftIRQ_, kSteal_};
-  for (int i : all) { // All non-guest values
-    valueslong[i] = stol(values[i]);
-    total += valueslong[i];
-  };
-  return total;
+  return LinuxParser::ActiveJiffies() + LinuxParser::IdleJiffies();
 }
 
 // Read and return the number of active jiffies for a PID
