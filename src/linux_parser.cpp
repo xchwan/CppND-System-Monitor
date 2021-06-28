@@ -73,19 +73,17 @@ float LinuxParser::MemoryUtilization() {
   string line;
   string key;
   string value;
-  string mtotal = 0;
-  string mfree = 0;
+  string mtotal;
+  string mfree;
   std::ifstream stream(kProcDirectory + kMeminfoFilename);
   if (stream.is_open()) {
     while (std::getline(stream, line)) {
-      std::remove(line.begin(), line.end(), ' ');
-      std::replace(line.begin(), line.end(), ':', ' ');
       std::istringstream linestream(line);
       while (linestream >> key >> value) {
         if (key == "MemTotal:") {
           mtotal = value;
         }
-        else if (key == "MemFree:") {
+        if (key == "MemFree:") {
           mfree = value;
         }
       }
@@ -222,7 +220,6 @@ string LinuxParser::Ram(int pid) {
   std::ifstream stream(kProcDirectory + to_string(pid) + kStatusFilename);
   if (stream.is_open()) {
     while (std::getline(stream, line)) {
-      std::replace(line.begin(), line.end(), ':', ' ');
       std::istringstream linestream(line);
       while (linestream >> key) {
         if (key == "VmSize:") {
@@ -243,7 +240,6 @@ string LinuxParser::Uid(int pid) {
   std::ifstream stream(kProcDirectory + to_string(pid) + kStatusFilename);
   if (stream.is_open()) {
     while (std::getline(stream, line)) {
-      std::replace(line.begin(), line.end(), ':', ' ');
       std::istringstream linestream(line);
       while (linestream >> key >> value) {
         if (key == "Uid:") {
@@ -258,17 +254,15 @@ string LinuxParser::Uid(int pid) {
 // Read and return the user associated with a process
 string LinuxParser::User(int pid) {
   string line;
-  string value = ""; 
-  string other; 
-  string uid;
+  string name, x, uid;
   std::ifstream stream(kPasswordPath);
   if (stream.is_open()) {
     while (std::getline(stream, line)) {
       std::replace(line.begin(), line.end(), ':', ' ');
       std::istringstream linestream(line);
-      while (linestream >> value >> other >> uid) {
+      while (linestream >> name >> x >> uid) {
         if (uid == LinuxParser::Uid(pid)) {
-          return value;
+          return name;
         }
       }
     }
