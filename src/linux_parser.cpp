@@ -101,7 +101,7 @@ long LinuxParser::UpTime() {
   return stol(totalUptime);
 }
 
-// Read and return the number of jiffies for the system
+// Read and return the number of jiffies for the system//
 long LinuxParser::Jiffies() {
   return LinuxParser::ActiveJiffies() + LinuxParser::IdleJiffies();
 }
@@ -191,7 +191,7 @@ int LinuxParser::RunningProcesses() {
   return 0;
 }
 
-// Read and return the command associated with a process
+// Read and return the command associated with a process//
 string LinuxParser::Command(int pid) {
   string line;
   std::ifstream stream(kProcDirectory + to_string(pid) + kCmdlineFilename);
@@ -223,22 +223,19 @@ string LinuxParser::Ram(int pid) {
 
 // Read and return the user ID associated with a process
 string LinuxParser::Uid(int pid) {
-  string line;
-  string key;
-  string value;
-  std::ifstream stream(kProcDirectory + to_string(pid) + kStatusFilename);
+  string token;
+  std::ifstream stream(LinuxParser::kProcDirectory + to_string(pid) +
+                       LinuxParser::kStatusFilename);
   if (stream.is_open()) {
-    while (std::getline(stream, line)) {
-      std::istringstream linestream(line);
-      while (linestream >> key >> value) {
-        if (key == "Uid:") {
-          return value;
-        }
+    while (stream >> token) {
+      if (token == "Uid:") {
+        if (stream >> token) return token;
       }
     }
   }
-  return "0";
+  return string("");
 }
+
 
 // Read and return the user associated with a process//
 string LinuxParser::User(int pid) {
